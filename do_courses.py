@@ -20,7 +20,7 @@ class Course: # {{{
 
         for a in tr.select('td.kurz-play a, td.kurz-replay a'):
             try:
-                m = re.match(r"window\.open\s*\(\s*'(../kurzy-story[^']*)'", a['onclick'])
+                m = re.match(r"window\.open\s*\(\s*'(../kurzy-(?:story|scorm)[^']*)'", a['onclick'])
                 if m:
                     self.play = m.group(1)
             except KeyError:
