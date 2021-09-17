@@ -131,28 +131,32 @@ class Instructor: # {{{
             s.select_form('form')
             r = s.submit_selected()
         assert "test/default1.aspx" in s.get_url()
-        assert len(r.soup.select("table.question")) > 3
-        s.select_form('form')
-        referer = s.get_url()
-        r = s._request(
-            s.get_current_form().form,
-            s.get_url(),
-            headers={"Referer": s.get_url()}
-        )
-        s.add_soup(r, s.soup_config)
-        for q in r.soup.select("table.question"):
-            for td in q.select("table.questionText td"):
-                print(td.text.strip())
-            for tr in q.select("table.answers tr"):
-                for i in tr.select("input"):
-                    name  = i["name"]
-                    value = i["value"]
-                prefix = " - "
-                for p in tr.select("p"):
-                    if "right" in p.get("class",''):
-                        prefix = " * "
-                        s[name] = value
-                    print(prefix + p.text.strip())
+        if len(r.soup.select("table.question")) > 3:
+            s.select_form('form')
+            referer = s.get_url()
+            r = s._request(
+                s.get_current_form().form,
+                s.get_url(),
+                headers={"Referer": s.get_url()}
+            )
+            s.add_soup(r, s.soup_config)
+            for q in r.soup.select("table.question"):
+                for td in q.select("table.questionText td"):
+                    print(td.text.strip())
+                for tr in q.select("table.answers tr"):
+                    for i in tr.select("input"):
+                        name  = i["name"]
+                        value = i["value"]
+                    prefix = " - "
+                    for p in tr.select("p"):
+                        if "right" in p.get("class",''):
+                            prefix = " * "
+                            s[name] = value
+                        print(prefix + p.text.strip())
+        elif len(r.soup.select("div.mainFrame input.end")) > 0:
+            s.select_form('#form1')
+        else:
+            raise Exception("Unsupported course.")
 
         r = s.submit_selected()
         if 200 <= r.status_code < 300:
