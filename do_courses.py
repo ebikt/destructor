@@ -112,8 +112,8 @@ class Instructor: # {{{
         assert 200 <= r.status_code < 300
 
         s.select_form('form[action="./"]')
-        s["tbLogin"]    = user
-        s["tbPassword"] =  password
+        s["tb1"]    = user
+        s["tb2"] =  password
         r = s.submit_selected()
         assert 200 <= r.status_code < 300
         return self.get_active_courses(r)
