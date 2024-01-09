@@ -9,16 +9,18 @@ class Course: # {{{
         self.name     = None
         self.play     = None
         self.detail   = None
-        self.cert     = None
         self.until    = None
-        self.absolved = None
 
-    def load_tr(self, tr, until_n = 0, since_n = 0): # {{{
+        #self.cert     = None
+        #self.absolved = None
 
-        for td in tr.select('td:nth-child(2)'):
-            self.name = td.text.strip()
+    def load_div(self, div): # {{{
 
-        for a in tr.select('td.kurz-play a, td.kurz-replay a'):
+        for p in div.select('div.course-col-name p:nth-child(1)'):
+            self.name = p.text.strip()
+
+        for a in div.select('div.course-col-play a'):
+            #'td.kurz-play a, td.kurz-replay a'
             try:
                 m = re.match(r"window\.open\s*\(\s*'(../kurzy-(?:story|scorm)[^']*)'", a['onclick'])
                 if m:
@@ -26,31 +28,30 @@ class Course: # {{{
             except KeyError:
                 pass
 
-        for span in tr.select('td.detail-info span'):
+        for a in div.select('td.course-col-detail a'):
             try:
-                self.detail = span['jsparam']
+                self.detail = a['jsparam']
             except KeyError:
                 pass
 
-        for a in tr.select('a.kurz-certifikat'):
-            try:
-                self.cert = a['href']
-            except KeyError:
-                pass
+        #for a in tr.select('a.kurz-certifikat'):
+        #    try:
+        #        self.cert = a['href']
+        #    except KeyError:
+        #        pass
 
-        if until_n > 0:
-            for td in tr.select('td:nth-child(%d)' % until_n):
-                self.until = td.text.strip()
+        for d in div.select('div.course-col-date'):
+            self.until = d.text.strip()
 
-        if since_n > 0:
-            for td in tr.select('td:nth-child(%d)' % since_n):
-                self.absolved = td.text.strip()
+        #if since_n > 0:
+        #    for td in tr.select('td:nth-child(%d)' % since_n):
+        #        self.absolved = td.text.strip()
 
         return self
     # }}}
 
     def __str__(self):
-        return "kurz: %(name)s\n  do: %(until)s\n  url: %(play)s\n  kdy: %(absolved)s\n  cert: %(cert)s" % self.__dict__
+        return "kurz: %(name)s\n  do: %(until)s\n  url: %(play)s" % self.__dict__
 
     def absolved_date(self): # {{{
         if self.absolved is None:
@@ -85,14 +86,17 @@ class Instructor: # {{{
             response = s.open(self.URL + '/user/u_objednane.aspx')
             assert 200 <= response.status_code < 300
 
-        for course_tr in response.soup.select("tr:has(td.kurz-play)"):
-            self.active_courses.append(Course().load_tr(course_tr, until_n = 4))
+        for course_div in response.soup.select("div.course"):
+            self.active_courses.append(Course().load_div(course_div))
             #print(self.active_courses[-1])
 
         return self.active_courses
     # }}}
 
     def get_passed_courses(self, response=None): # {{{
+        return []
+
+        #OBSOLETE
         self.passed_courses = []
         if response is None:
             s = self.s

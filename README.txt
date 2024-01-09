@@ -9,7 +9,9 @@ do_courses.py
 
 Závislost: mechanicalsoup (apt install python3-mechanicalsoup)
 
-Pokusí se vyplnit nesplněné kurzy a stáhne certifikáty kurzů splněných v posledním týdnu.
+Pokusí se vyplnit nesplněné kurzy.
+(Stahování certifikátu není po změnách automatizované, protože na stránkách
+instructor.cz přibyla možnost podepisování.)
 
 Bez parametrů se zeptá na jméno a heslo:
 
