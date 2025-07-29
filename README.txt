@@ -30,7 +30,7 @@ ve skutečnosti prostě spustí `pass my_password_path` a očekává výstup ve 
 sign.py
 -------
 
-Závislosti: bs4, pdfrw, pdftotext (apt install python3-bs4 python3 pdfrw poppler-utils)
+Závislosti: bs4, pdfrw, pdftotext (apt install python3-bs4 python3-pdfrw poppler-utils)
 
 Očekává pdf s certikátem, oříznuté pdf s podpisem, prefix výstupu:
 
